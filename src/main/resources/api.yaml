@@ -1,0 +1,186 @@
+openapi: 3.0.3
+info:
+  title: API de Productos y Categorías
+  version: 1.0.0
+paths:
+  /api/v1/product:
+    get:
+      operationId: getProduct
+      tags:
+        - Product
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json: {}
+    post:
+      operationId: postProduct
+      tags:
+        - Product
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductRequestDTO"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json: {}
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+    put:
+      operationId: putProduct
+      tags:
+        - Product
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductRequestDTO"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json: {}
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+    delete:
+      operationId: deleteProduct
+      tags:
+        - Product
+      parameters:
+        - name: id
+          in: query
+          required: true
+          description: ID of the product to delete
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json: {}
+        "401":
+          description: Not Authorized
+        "403":
+          description: Not Allowed
+  /categories:
+    get:
+      summary: Obtener todas las categorías
+      tags:
+        - Category
+      responses:
+        '200':
+          description: Lista de categorías
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategoryRequestDTO'
+    post:
+      summary: Crear una nueva categoría
+      tags:
+        - Category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryRequestDTO'
+      responses:
+        '201':
+          description: Categoría creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryRequestDTO'
+  /categories/{id}:
+    get:
+      summary: Obtener una categoría por ID
+      tags:
+        - Category
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Categoría encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryRequestDTO'
+        '404':
+          description: Categoría no encontrada
+    put:
+      summary: Actualizar una categoría por ID
+      tags:
+        - Category
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryRequestDTO'
+      responses:
+        '200':
+          description: Categoría actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryRequestDTO'
+        '404':
+          description: Categoría no encontrada
+    delete:
+      summary: Eliminar una categoría por ID
+      tags:
+        - Category
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Categoría eliminada
+        '404':
+          description: Categoría no encontrada
+components:
+  schemas:
+    ProductRequestDTO:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        short_description:
+          type: string
+        description:
+          type: string
+          maxLength: 20
+          pattern: '^[A-Za-z\s]*$'
+    CategoryRequestDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID de la categoría
+        name:
+          type: string
+          description: Nombre de la categorí
