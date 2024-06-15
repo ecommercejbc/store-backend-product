@@ -1,24 +1,21 @@
 package org.quarkus.business.controller;
 
+import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
-import jakarta.validation.Valid;
-import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.openapitools.client.model.ProductRequestDTO;
+import org.bson.types.ObjectId;
 import org.quarkus.business.service.ProductService;
 
 
 import jakarta.ws.rs.*;
 import org.quarkus.business.document.Product;
+import org.quarkus.business.utils.ResponseUtil;
 import org.quarkus.business.validator.ProductRequestValidator;
 
-import java.util.List;
-
 @Path("/api/v1/product")
-
 public class ProductController {
 
 
@@ -28,7 +25,48 @@ public class ProductController {
     @Inject
     ProductRequestValidator productRequestValidator;
 
+    @GET
+    public Uni<Response> listProducts() {
+        return productService.listProducts()
+                .onItem().transform(ResponseUtil::buildResponseList)
+                .onFailure().recoverWithItem(ResponseUtil::handleError);
+    }
+
+    @GET
+    @Path("/{id}")
+    public Uni<Response> getProduct(@PathParam("id") String id) {
+        return productService.getProduct(new ObjectId(id))
+                .onItem().transform(ResponseUtil::buildResponseObject)
+                .onFailure().recoverWithItem(ResponseUtil::handleError);
+    }
+
     @POST
+    public Uni<Response> saveProduct(Product product){
+        return productService.saveProduct(product)
+                .onItem().transform(ResponseUtil::buildResponseObject)
+                .onFailure().recoverWithItem(ResponseUtil::handleError);
+    }
+
+    @GET
+    @Path("/{userId}/{categoryId}")
+    public Uni<Response> getProductByUserAndCategory(@PathParam("userId") String userId, @PathParam("categoryId") String categoryId){
+        return productService.getProductBy(userId, categoryId)
+                .onItem().transform(ResponseUtil::buildResponseList)
+                .onFailure().recoverWithItem(ResponseUtil::handleError);
+    }
+
+    @DELETE
+    @Path("/{id}")
+    public Uni<Response> deleteProduct(@PathParam("id") String id){
+        return productService.deleteProduct(new ObjectId(id)).onItem().transform(ResponseUtil::buildResponseObject)
+                .onFailure().recoverWithItem(ResponseUtil::handleError);
+    }
+
+
+
+
+
+    /*@POST
     @RolesAllowed("Admin")
     public Uni<Response> save(@Valid ProductRequestDTO productRequestDTO) {
         return productService.insert(productRequestDTO)
@@ -88,5 +126,5 @@ public class ProductController {
                         return Response.status(Response.Status.NOT_FOUND).entity("Producto no encontrado.").build();
                     }
                 });
-    }
+    }*/
 }
