@@ -14,7 +14,18 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Category extends ReactivePanacheMongoEntity {
-    @BsonProperty("name")
+    public String name;
+    public String slug;
+    public String description;
+    public String id;
+}
+
+
+
+
+
+/*
+   @BsonProperty("name")
     public String name;
 
     @BsonProperty("slug")
@@ -75,5 +86,4 @@ public class Category extends ReactivePanacheMongoEntity {
         public String createdAt;
         public String updatedAt;
         public String originalUrl;
-    }
-}
+    }*/
