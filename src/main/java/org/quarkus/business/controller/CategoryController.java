@@ -6,14 +6,13 @@ import jakarta.ws.rs.core.Response;
 import org.bson.types.ObjectId;
 import org.quarkus.business.document.Category;
 import org.bson.Document;
+import org.quarkus.business.response.ResponseUtil;
 import org.quarkus.business.service.CategoryService;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
-import org.quarkus.business.utils.ResponseUtil;
 
 
-import java.awt.*;
 import java.util.List;
 
 @Path("/api/v1/category")
@@ -64,10 +63,6 @@ public class CategoryController {
                 .onItem().transform(ResponseUtil::buildResponseObject)
                 .onFailure().recoverWithItem(ResponseUtil::handleError);
     }
-
-
-
-
 }
 
 

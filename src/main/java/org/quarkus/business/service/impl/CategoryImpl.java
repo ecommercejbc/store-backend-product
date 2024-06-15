@@ -78,34 +78,3 @@ public class CategoryImpl implements CategoryService {
     }
 
 }
-
-
-
-
-/*@Override
-
-
-    @Override
-    public Uni<Category> insert(CategoryRequestDTO categoryRequestDTO) {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
-        Category category = new Category();
-        // Aquí puedes asignar los valores de categoryRequestDTO a category
-        // Por ejemplo: category.name = categoryRequestDTO.getName();
-
-        return categoryRepository.persist(category).replaceWith(category);
-    }
-
-
-
-    @Override
-    public Uni<Category> update(String id, CategoryRequestDTO categoryRequestDTO) {
-        // Implementa la lógica de actualización aquí
-        return null;
-    }
-
-    /*@Override
-    public Uni<Boolean> delete(String id) {
-        // Implementa la lógica de eliminación aquí
-        return null;
-    }*/

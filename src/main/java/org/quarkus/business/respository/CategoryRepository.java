@@ -9,8 +9,4 @@ import org.quarkus.business.document.Category;
 @Singleton
 public class CategoryRepository implements ReactivePanacheMongoRepository<Category> {
 
-
-    // Aquí puedes agregar consultas personalizadas si las necesitas
-    // Por ejemplo: Multi<Category> findByCategoryType(String categoryType);
-
 }
