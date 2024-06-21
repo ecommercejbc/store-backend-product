@@ -1,7 +1,6 @@
 package org.quarkus.business.respository;
 
 import io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoRepository;
-import io.smallrye.mutiny.Multi;
 import jakarta.inject.Singleton;
 import org.quarkus.business.document.Product;
 

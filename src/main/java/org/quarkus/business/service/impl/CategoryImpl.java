@@ -7,14 +7,12 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.openapitools.client.model.CategoryRequestDTO;
 import org.quarkus.business.document.Category;
 import org.quarkus.business.respository.CategoryRepository;
 import org.quarkus.business.service.CategoryService;
 import org.quarkus.business.utils.Constants;
 
 import java.util.List;
-import java.sql.Timestamp;
 import java.util.stream.Collectors;
 
 

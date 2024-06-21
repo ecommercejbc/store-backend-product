@@ -1,22 +1,14 @@
 package org.quarkus.business.service.impl;
 
-import io.quarkus.panache.common.Sort;
-import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.openapitools.client.model.ProductRequestDTO;
 import org.quarkus.business.document.Product;
 import org.quarkus.business.respository.ProductRepository;
 import org.quarkus.business.service.ProductService;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collector;
 
 @Singleton
 public class ProductImpl implements ProductService {
@@ -31,9 +23,7 @@ public class ProductImpl implements ProductService {
 
     @Override
     public Uni<List<Product>> listProducts() {
-        throw new IllegalArgumentException("El nombre del influencer no puede ser nulo o vacío");
-        //return Uni.createFrom().failure(new IllegalArgumentException("El nombre del influencer no puede ser nulo o vacío"));
-        //return productRepository.listAll();
+         return productRepository.listAll();
     }
 
     @Override

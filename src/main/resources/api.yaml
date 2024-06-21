@@ -12,7 +12,9 @@ paths:
         "200":
           description: OK
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductResponseDTO"
     post:
       operationId: postProduct
       tags:
@@ -26,7 +28,9 @@ paths:
         "200":
           description: OK
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductResponseDTO"
         "401":
           description: Not Authorized
         "403":
@@ -44,7 +48,9 @@ paths:
         "200":
           description: OK
           content:
-            application/json: {}
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductResponseDTO"
         "401":
           description: Not Authorized
         "403":
@@ -82,7 +88,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/CategoryRequestDTO'
+                  $ref: '#/components/schemas/CategoryResponseDTO'
     post:
       summary: Crear una nueva categoría
       tags:
@@ -99,7 +105,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CategoryRequestDTO'
+                $ref: '#/components/schemas/CategoryResponseDTO'
   /categories/{id}:
     get:
       summary: Obtener una categoría por ID
@@ -117,7 +123,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CategoryRequestDTO'
+                $ref: '#/components/schemas/CategoryResponseDTO'
         '404':
           description: Categoría no encontrada
     put:
@@ -142,7 +148,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CategoryRequestDTO'
+                $ref: '#/components/schemas/CategoryResponseDTO'
         '404':
           description: Categoría no encontrada
     delete:
@@ -165,12 +171,29 @@ components:
     ProductRequestDTO:
       type: object
       properties:
-        id:
-          type: string
         name:
           type: string
         short_description:
           type: string
+        priceDiscount:
+          type: number
+        priceOriginal:
+          type: number
+        description:
+          type: string
+          maxLength: 20
+          pattern: '^[A-Za-z\s]*$'
+    ProductResponseDTO:
+      type: object
+      properties:
+        name:
+          type: string
+        short_description:
+          type: string
+        priceDiscount:
+          type: number
+        priceOriginal:
+          type: number
         description:
           type: string
           maxLength: 20
@@ -178,9 +201,15 @@ components:
     CategoryRequestDTO:
       type: object
       properties:
+        name:
+          type: string
+          description: Nombre de la categoría
+    CategoryResponseDTO:
+      type: object
+      properties:
         id:
           type: string
           description: ID de la categoría
         name:
           type: string
-          description: Nombre de la categorí
+          description: Nombre de la categoría
