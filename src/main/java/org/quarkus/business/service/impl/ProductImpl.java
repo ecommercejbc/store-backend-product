@@ -1,22 +1,15 @@
 package org.quarkus.business.service.impl;
 
-import io.quarkus.panache.common.Sort;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.openapitools.client.model.ProductRequestDTO;
 import org.quarkus.business.document.Product;
 import org.quarkus.business.respository.ProductRepository;
 import org.quarkus.business.service.ProductService;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collector;
 
 @Singleton
 public class ProductImpl implements ProductService {
@@ -31,14 +24,20 @@ public class ProductImpl implements ProductService {
 
     @Override
     public Uni<List<Product>> listProducts() {
-        throw new IllegalArgumentException("El nombre del influencer no puede ser nulo o vacío");
+        return productRepository.listAll();
+        //throw new IllegalArgumentException("El nombre del influencer no puede ser nulo o vacío");
         //return Uni.createFrom().failure(new IllegalArgumentException("El nombre del influencer no puede ser nulo o vacío"));
-        //return productRepository.listAll();
+        /*return Multi.createFrom().ticks().every(Duration.ofSeconds(5))
+                .onItem().transformToUniAndMerge(tick -> productRepository.listAll())
+                .flatMap(persons -> Multi.createFrom().items(persons.stream()));*/
+
     }
 
     @Override
     public Uni<Product> getProduct(ObjectId id) {
-        return productRepository.findById(id);
+        return productRepository.findById(id)
+                .onItem().ifNotNull().transformToUni(p -> productRepository.delete(p).onItem().transform(ignore -> p))
+                .onItem().ifNull().failWith(new IllegalArgumentException("No se encontró ningun producto con el id proporcionado"));
     }
 
     @Override
@@ -50,6 +49,24 @@ public class ProductImpl implements ProductService {
     @Override
     public Uni<Product> deleteProduct(ObjectId id) {
         return productRepository.findById(id)
-                .onItem().transformToUni(product -> productRepository.delete(product).onItem().transform(x -> product));
+                .onItem().ifNotNull().transformToUni(p -> productRepository.delete(p).onItem().transform(ignore -> p))
+                .onItem().ifNull().failWith(new IllegalArgumentException("No se encontró ningun producto con el id proporcionado"));
+    }
+
+    @Override
+    public Uni<Product> updateProduct(ObjectId id, Product product) {
+        return productRepository.findById(id)
+                .onItem().ifNotNull().transformToUni(p ->{
+                    p.setName(product.getName());
+                    p.setSlug(product.getSlug());
+                    p.setDescription(product.getDescription());
+                    p.setPriceDiscount(product.getPriceDiscount());
+                    p.setPriceOriginal(product.getPriceOriginal());
+                    p.setCurrency(product.getCurrency());
+                    p.setUrlImage(product.getUrlImage());
+                    p.setCategoryId(product.getCategoryId());
+                    p.setUserId(product.getUserId());
+                    return productRepository.update(p);
+                }).onItem().ifNull().failWith(new IllegalArgumentException("No se encontró ningun producto con el id proporcionado"));
     }
 }

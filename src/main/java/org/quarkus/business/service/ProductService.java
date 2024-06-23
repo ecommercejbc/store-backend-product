@@ -3,6 +3,7 @@ package org.quarkus.business.service;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import org.bson.types.ObjectId;
+import org.jboss.resteasy.reactive.RestMulti;
 import org.openapitools.client.model.ProductRequestDTO;
 import org.quarkus.business.document.Product;
 
@@ -15,4 +16,5 @@ public interface ProductService {
     Uni<Product> getProduct(ObjectId id);
     Uni<List<Product>> getProductBy(String userId, String categoryId);
     Uni<Product> deleteProduct(ObjectId id);
+    Uni<Product> updateProduct(ObjectId id, Product product);
 }
