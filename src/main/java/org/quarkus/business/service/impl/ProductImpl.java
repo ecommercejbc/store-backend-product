@@ -31,9 +31,9 @@ public class ProductImpl implements ProductService {
 
     @Override
     public Uni<List<Product>> listProducts() {
-        throw new IllegalArgumentException("El nombre del influencer no puede ser nulo o vacío");
+        //throw new IllegalArgumentException("El nombre del influencer no puede ser nulo o vacío");
         //return Uni.createFrom().failure(new IllegalArgumentException("El nombre del influencer no puede ser nulo o vacío"));
-        //return productRepository.listAll();
+        return productRepository.listAll();
     }
 
     @Override
