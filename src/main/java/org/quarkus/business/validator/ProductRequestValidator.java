@@ -1,36 +1,49 @@
 package org.quarkus.business.validator;
 
 import jakarta.enterprise.context.Dependent;
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
-import org.openapitools.client.model.ProductRequestDTO;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-import java.util.Set;
+import org.openapitools.client.model.ProductResponseDTO;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @Dependent
 public class ProductRequestValidator {
 
-    //@Inject
-   // Validator validator;
+    public HashMap<String, List<String>> validate(ProductResponseDTO productResponseDTO) {
+        HashMap<String, List<String>> errors = new HashMap<>();
 
-    public boolean isValid(ProductRequestDTO productRequestDTO) {
-        // Validar campos requeridos
-        if (productRequestDTO.getName() == null || productRequestDTO.getName().isEmpty()) {
-            return false;
+        // Validar el campo 'name'
+        List<String> nameErrors = new ArrayList<>();
+        if (productResponseDTO.getName() == null || productResponseDTO.getName().isEmpty()) {
+            nameErrors.add("Name is required.");
         }
-        if (productRequestDTO.getDescription() == null || productRequestDTO.getDescription().isEmpty()) {
-            return false;
+        if (productResponseDTO.getName() != null && productResponseDTO.getName().length() > 50) {
+            nameErrors.add("Name must be less than 50 characters.");
         }
-        // Otras validaciones según tus requisitos
-        // Por ejemplo, validar la longitud máxima de los campos, el formato, etc.
+        // Puedes añadir más validaciones según sea necesario
 
-        // Si todas las validaciones pasan, la solicitud es válida
-        return true;
+        if (!nameErrors.isEmpty()) {
+            errors.put("name", nameErrors);
+        }
+
+        // Validar el campo 'description'
+        List<String> descriptionErrors = new ArrayList<>();
+        if (productResponseDTO.getDescription() == null || productResponseDTO.getDescription().isEmpty()) {
+            descriptionErrors.add("Description is required.");
+        }
+        if (productResponseDTO.getDescription() != null && productResponseDTO.getDescription().length() > 200) {
+            descriptionErrors.add("Description must be less than 200 characters.");
+        }
+        // Ejemplo de validación adicional: longitud máxima
+        // Puedes añadir más validaciones según sea necesario
+
+        if (!descriptionErrors.isEmpty()) {
+            errors.put("description", descriptionErrors);
+        }
+
+        // Validar otros campos según tus requisitos
+
+        return errors;
     }
 
-    public Set<ConstraintViolation<ProductRequestDTO>> validate(ProductRequestDTO productRequestDTO) {
-       return null;// return validator.validate(productRequestDTO);
-    }
 }

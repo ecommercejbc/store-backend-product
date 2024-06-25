@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ResponseUtil {
+
     public static <T> Response buildResponseList(List<T> data) {
         if (data.isEmpty()) {
             ApiResponse<List<T>> apiResponse = new ApiResponse<>(404, new HashMap<>(), data);
@@ -35,5 +36,10 @@ public class ResponseUtil {
         errorHeaders.put("Error-Message", Collections.singletonList(throwable.getMessage()));
         ApiResponse<List<User>> errorResponse = new ApiResponse<>(500, errorHeaders, null);
         return Response.status(500).entity(errorResponse).build();
+    }
+
+    public static <T> Response buildResponseHeaders(HashMap<String, List<String>> data) {
+        ApiResponse<T> apiResponse = new ApiResponse<>(400, data, null);
+        return Response.status(400).entity(apiResponse).build();
     }
 }
