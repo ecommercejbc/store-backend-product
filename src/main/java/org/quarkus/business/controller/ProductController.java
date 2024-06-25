@@ -60,12 +60,4 @@ public class ProductController {
                 .onFailure().recoverWithItem(ResponseUtil::handleError);
     }
 
-    @PUT
-    @Path("/{id}")
-    public Uni<Response> updateProduct(@PathParam("id") String id, Product product) {
-        return productService.updateProduct(new ObjectId(id), product)
-                .onItem().transform(ResponseUtil::buildResponseObject)
-                .onFailure().recoverWithItem(ResponseUtil::handleError);
-    }
-
 }

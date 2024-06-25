@@ -53,20 +53,4 @@ public class ProductImpl implements ProductService {
                 .onItem().ifNull().failWith(new IllegalArgumentException("No se encontró ningun producto con el id proporcionado"));
     }
 
-    @Override
-    public Uni<Product> updateProduct(ObjectId id, Product product) {
-        return productRepository.findById(id)
-                .onItem().ifNotNull().transformToUni(p ->{
-                    p.setName(product.getName());
-                    p.setSlug(product.getSlug());
-                    p.setDescription(product.getDescription());
-                    p.setPriceDiscount(product.getPriceDiscount());
-                    p.setPriceOriginal(product.getPriceOriginal());
-                    p.setCurrency(product.getCurrency());
-                    p.setUrlImage(product.getUrlImage());
-                    p.setCategoryId(product.getCategoryId());
-                    p.setUserId(product.getUserId());
-                    return productRepository.update(p);
-                }).onItem().ifNull().failWith(new IllegalArgumentException("No se encontró ningun producto con el id proporcionado"));
-    }
 }
