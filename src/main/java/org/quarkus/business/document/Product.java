@@ -2,13 +2,11 @@ package org.quarkus.business.document;
 
 import io.quarkus.mongodb.panache.common.MongoEntity;
 import io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntity;
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import lombok.*;
-import org.bson.codecs.pojo.annotations.BsonProperty;
-import org.bson.types.ObjectId;
-
-import java.util.List;
 
 @MongoEntity(collection = "products")
+@RegisterForReflection
 @Data
 @Getter
 @Setter
@@ -18,6 +16,7 @@ public class Product extends ReactivePanacheMongoEntity {
     public String name;
     public String slug;
     public String description;
+    public String short_description;
     public double priceDiscount;
     public double priceOriginal;
     public String currency;

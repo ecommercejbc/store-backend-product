@@ -14,7 +14,9 @@ public interface ProductService {
     Uni<Product> saveProduct(Product product);
     Uni<List<Product>> listProducts();
     Uni<Product> getProduct(ObjectId id);
-    Uni<List<Product>> getProductBy(String userId, String categoryId);
+    Uni<List<Product>> getProductsByUserAndCategory(String userId, String categoryId);
     Uni<Product> deleteProduct(ObjectId id);
     Uni<Product> updateProduct(ObjectId id, Product product);
+    Uni<List<Product>> productsByUserId(String userId);
+    Uni<Product> getProductByUserAndSlug(String userId, String slug);
 }

@@ -19,10 +19,8 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.List;
 
-@Path("/api/v1/product")
+@Path("/v1/product")
 public class ProductController {
-
-
     @Inject
     ProductService productService;
 
@@ -33,6 +31,7 @@ public class ProductController {
     ProductRequestValidator productRequestValidator;
 
     @GET
+    @Produces(MediaType.APPLICATION_JSON)
     public Uni<Response> listProducts() {
         return productService.listProducts()
                 .onItem().transformToUni( products -> Uni.createFrom().item(products.stream().map(
@@ -41,17 +40,9 @@ public class ProductController {
                 .onFailure().recoverWithItem(ResponseUtil::handleError);
     }
 
-    @GET
-    @Path("/{id}")
-    public Uni<Response> getProduct(@PathParam("id") String id) {
-        return productService.getProduct(new ObjectId(id))
-                .onItem().transform(ResponseUtil::buildResponseObject)
-                .onFailure().recoverWithItem(ResponseUtil::handleError);
-    }
-
     @POST
+    @Produces(MediaType.APPLICATION_JSON)
     public Uni<Response> saveProduct(ProductResponseDTO productRequestDTO) {
-
         HashMap<String, List<String>> validationErrors = productRequestValidator.validate(productRequestDTO);
         if (!validationErrors.isEmpty()) {
             return Uni.createFrom().item(ResponseUtil.buildResponseHeaders(validationErrors));
@@ -67,23 +58,59 @@ public class ProductController {
 
     @GET
     @Path("/{userId}/{categoryId}")
+    @Produces(MediaType.APPLICATION_JSON)
     public Uni<Response> getProductByUserAndCategory(@PathParam("userId") String userId, @PathParam("categoryId") String categoryId) {
-        return productService.getProductBy(userId, categoryId)
+        return productService.getProductsByUserAndCategory(userId, categoryId)
+                .onItem().transformToUni( products -> Uni.createFrom().item(products.stream().map(
+                        product -> modelMapper.map(product, ProductResponseDTO.class)).toList()))
                 .onItem().transform(ResponseUtil::buildResponseList)
                 .onFailure().recoverWithItem(ResponseUtil::handleError);
     }
 
     @DELETE
     @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
     public Uni<Response> deleteProduct(@PathParam("id") String id) {
-        return productService.deleteProduct(new ObjectId(id)).onItem().transform(ResponseUtil::buildResponseObject)
+        return productService.deleteProduct(new ObjectId(id))
+                .map(product -> modelMapper.map(product, ProductResponseDTO.class))
+                .onItem().transform(ResponseUtil::buildResponseObject)
                 .onFailure().recoverWithItem(ResponseUtil::handleError);
     }
 
     @PUT
     @Path("/{id}")
-    public Uni<Response> updateProduct(@PathParam("id") String id, Product product) {
+    @Produces(MediaType.APPLICATION_JSON)
+    public Uni<Response> updateProduct(@PathParam("id") String id, ProductResponseDTO productRequestDTO) {
+        HashMap<String, List<String>> validationErrors = productRequestValidator.validate(productRequestDTO);
+        if(!validationErrors.isEmpty()) {
+            return Uni.createFrom().item(ResponseUtil.buildResponseHeaders(validationErrors));
+        }
+
+        Product product = modelMapper.map(productRequestDTO, Product.class);
+
         return productService.updateProduct(new ObjectId(id), product)
+                .map(product1 -> modelMapper.map(product1, ProductResponseDTO.class))
+                .onItem().transform(ResponseUtil::buildResponseObject)
+                .onFailure().recoverWithItem(ResponseUtil::handleError);
+    }
+
+    @GET
+    @Path("/{userId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Uni<Response> productsByUserId(@PathParam("userId") String userId) {
+        return productService.productsByUserId(userId)
+                .onItem().transformToUni( products -> Uni.createFrom().item(products.stream().map(
+                        product -> modelMapper.map(product, ProductResponseDTO.class)).toList()))
+                .onItem().transform(ResponseUtil::buildResponseList)
+                .onFailure().recoverWithItem(ResponseUtil::handleError);
+    }
+
+    @GET
+    @Path("/detail/{userId}/{slug}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Uni<Response> getProductByUserAndSlug(@PathParam("userId") String userId, @PathParam("slug") String slug) {
+        return productService.getProductByUserAndSlug(userId, slug)
+                .map(product -> modelMapper.map(product, ProductResponseDTO.class))
                 .onItem().transform(ResponseUtil::buildResponseObject)
                 .onFailure().recoverWithItem(ResponseUtil::handleError);
     }

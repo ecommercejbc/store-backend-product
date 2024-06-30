@@ -42,7 +42,7 @@ public class ProductImpl implements ProductService {
     }
 
     @Override
-    public Uni<List<Product>> getProductBy(String userId, String categoryId) {
+    public Uni<List<Product>> getProductsByUserAndCategory(String userId, String categoryId) {
         String query = String.format("{ userId: {$regex: '^%s$'}, categoryId: {$regex: '^%s$'} }", userId, categoryId);
         return productRepository.find(query).list();
     }
@@ -68,5 +68,16 @@ public class ProductImpl implements ProductService {
                     p.setUserId(product.getUserId());
                     return productRepository.update(p);
                 }).onItem().ifNull().failWith(new IllegalArgumentException("No se encontró ningun producto con el id proporcionado"));
+    }
+
+    @Override
+    public Uni<List<Product>> productsByUserId(String userId) {
+        return productRepository.find("userId", userId).list();
+    }
+
+    @Override
+    public Uni<Product> getProductByUserAndSlug(String userId, String slug) {
+        String query = String.format("{ userId: {$regex: '^%s$'}, slug: {$regex: '^%s$', $options: 'i'} }", userId, slug);
+        return productRepository.find(query).firstResult();
     }
 }
