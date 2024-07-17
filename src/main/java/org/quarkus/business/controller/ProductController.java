@@ -1,6 +1,5 @@
 package org.quarkus.business.controller;
 
-import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MediaType;
@@ -17,7 +16,6 @@ import org.quarkus.business.validator.ProductRequestValidator;
 import java.util.List;
 
 import java.util.HashMap;
-import java.util.List;
 
 @Path("/v1/product")
 public class ProductController {
@@ -95,10 +93,10 @@ public class ProductController {
     }
 
     @GET
-    @Path("/{userId}")
+    @Path("influencerId/{influencerId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Uni<Response> productsByUserId(@PathParam("userId") String userId) {
-        return productService.productsByUserId(userId)
+    public Uni<Response> productsByInfluencerId(@PathParam("influencerId") String influencerId) {
+        return productService.productsByInfluencerId(influencerId)
                 .onItem().transformToUni( products -> Uni.createFrom().item(products.stream().map(
                         product -> modelMapper.map(product, ProductResponseDTO.class)).toList()))
                 .onItem().transform(ResponseUtil::buildResponseList)
@@ -112,6 +110,16 @@ public class ProductController {
         return productService.getProductByUserAndSlug(userId, slug)
                 .map(product -> modelMapper.map(product, ProductResponseDTO.class))
                 .onItem().transform(ResponseUtil::buildResponseObject)
+                .onFailure().recoverWithItem(ResponseUtil::handleError);
+    }
+
+    @GET
+    @Path("/influencerId/{influencerId}/categoryName/{categoryName}")
+    public Uni<Response> getProductsInfluencerIdByCategoryName(@PathParam("influencerId") String influencerId, @PathParam("categoryName") String categoryName){
+        return productService.getProductsInfluencerIdByCategoryName(influencerId, categoryName)
+                .onItem().transformToUni(products -> Uni.createFrom().item(products.stream()
+                        .map(product -> modelMapper.map(product, ProductResponseDTO.class)).toList()))
+                .onItem().transform(ResponseUtil::buildResponseList)
                 .onFailure().recoverWithItem(ResponseUtil::handleError);
     }
 }

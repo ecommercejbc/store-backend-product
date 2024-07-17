@@ -71,13 +71,18 @@ public class ProductImpl implements ProductService {
     }
 
     @Override
-    public Uni<List<Product>> productsByUserId(String userId) {
-        return productRepository.find("userId", userId).list();
+    public Uni<List<Product>> productsByInfluencerId(String influencerId) {
+        return productRepository.find("userId", influencerId).list();
     }
 
     @Override
     public Uni<Product> getProductByUserAndSlug(String userId, String slug) {
         String query = String.format("{ userId: {$regex: '^%s$'}, slug: {$regex: '^%s$', $options: 'i'} }", userId, slug);
         return productRepository.find(query).firstResult();
+    }
+
+    @Override
+    public Uni<List<Product>> getProductsInfluencerIdByCategoryName(String influencerId, String categoryName) {
+        return productRepository.findProductsInfluencerIdByCategoryName(influencerId, categoryName);
     }
 }
