@@ -1,10 +1,7 @@
 package org.quarkus.business.service;
 
-import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import org.bson.types.ObjectId;
-import org.jboss.resteasy.reactive.RestMulti;
-import org.openapitools.client.model.ProductRequestDTO;
 import org.quarkus.business.document.Product;
 
 import java.util.List;
@@ -14,10 +11,9 @@ public interface ProductService {
     Uni<Product> saveProduct(Product product);
     Uni<List<Product>> listProducts();
     Uni<Product> getProduct(ObjectId id);
-    Uni<List<Product>> getProductsByUserAndCategory(String userId, String categoryId);
     Uni<Product> deleteProduct(ObjectId id);
     Uni<Product> updateProduct(ObjectId id, Product product);
     Uni<List<Product>> productsByInfluencerId(String influencerId);
-    Uni<Product> getProductByUserAndSlug(String userId, String slug);
-    Uni<List<Product>> getProductsInfluencerIdByCategoryName(String influencerId, String categoryName);
+    Uni<Product> getProductByInfluencerAndSlug(String influencerId, String slug);
+    Uni<List<Product>> getProductsByInfluencerAndCategoryName(String influencerId, String categoryName);
 }

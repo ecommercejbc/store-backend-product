@@ -171,33 +171,53 @@ components:
     ProductRequestDTO:
       type: object
       properties:
+        id:
+          type: string
         name:
           type: string
-        short_description:
+        slug:
           type: string
+        description:
+          type: string
+          maxLength: 50
+          pattern: '^[A-Za-z\s]*$'
         priceDiscount:
           type: number
         priceOriginal:
           type: number
-        description:
+        currency:
           type: string
-          maxLength: 20
-          pattern: '^[A-Za-z\s]*$'
+        urlImage:
+          type: string
+        influencerId:
+          type: string
+        categoryName:
+          type: string
     ProductResponseDTO:
       type: object
       properties:
+        id:
+          type: string
         name:
           type: string
-        short_description:
+        slug:
           type: string
+        description:
+          type: string
+          maxLength: 50
+          pattern: '^[A-Za-z\s]*$'
         priceDiscount:
           type: number
         priceOriginal:
           type: number
-        description:
+        currency:
           type: string
-          maxLength: 20
-          pattern: '^[A-Za-z\s]*$'
+        urlImage:
+          type: string
+        influencerId:
+          type: string
+        categoryName:
+          type: string
     CategoryRequestDTO:
       type: object
       properties:

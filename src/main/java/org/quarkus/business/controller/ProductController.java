@@ -5,9 +5,9 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.bson.types.ObjectId;
-import org.modelmapper.ModelMapper;
 import org.openapitools.client.model.ProductRequestDTO;
 import org.openapitools.client.model.ProductResponseDTO;
+import org.quarkus.business.config.ProductMapper;
 import org.quarkus.business.response.ResponseUtil;
 import jakarta.ws.rs.*;
 import org.quarkus.business.document.Product;
@@ -23,7 +23,7 @@ public class ProductController {
     ProductService productService;
 
     @Inject
-    ModelMapper modelMapper;
+    ProductMapper productMapper;
 
     @Inject
     ProductRequestValidator productRequestValidator;
@@ -33,7 +33,7 @@ public class ProductController {
     public Uni<Response> listProducts() {
         return productService.listProducts()
                 .onItem().transformToUni( products -> Uni.createFrom().item(products.stream().map(
-                        product -> modelMapper.map(product, ProductResponseDTO.class)).toList()))
+                        product -> productMapper.toProductResponseDTO(product)).toList()))
                 .onItem().transform(ResponseUtil::buildResponseList)
                 .onFailure().recoverWithItem(ResponseUtil::handleError);
     }
@@ -46,22 +46,11 @@ public class ProductController {
             return Uni.createFrom().item(ResponseUtil.buildResponseHeaders(validationErrors));
         }
 
-        Product product = modelMapper.map(productRequestDTO, Product.class);
+        Product product = productMapper.toProduct(productRequestDTO);
 
         return productService.saveProduct(product)
-                .map(product1 -> modelMapper.map(product1, ProductRequestDTO.class))
+                .map(product1 -> productMapper.toProductResponseDTO(product))
                 .onItem().transform(ResponseUtil::buildResponseObject)
-                .onFailure().recoverWithItem(ResponseUtil::handleError);
-    }
-
-    @GET
-    @Path("/{userId}/{categoryId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Uni<Response> getProductByUserAndCategory(@PathParam("userId") String userId, @PathParam("categoryId") String categoryId) {
-        return productService.getProductsByUserAndCategory(userId, categoryId)
-                .onItem().transformToUni( products -> Uni.createFrom().item(products.stream().map(
-                        product -> modelMapper.map(product, ProductResponseDTO.class)).toList()))
-                .onItem().transform(ResponseUtil::buildResponseList)
                 .onFailure().recoverWithItem(ResponseUtil::handleError);
     }
 
@@ -70,7 +59,7 @@ public class ProductController {
     @Produces(MediaType.APPLICATION_JSON)
     public Uni<Response> deleteProduct(@PathParam("id") String id) {
         return productService.deleteProduct(new ObjectId(id))
-                .map(product -> modelMapper.map(product, ProductResponseDTO.class))
+                .map(product -> productMapper.toProductResponseDTO(product))
                 .onItem().transform(ResponseUtil::buildResponseObject)
                 .onFailure().recoverWithItem(ResponseUtil::handleError);
     }
@@ -84,10 +73,10 @@ public class ProductController {
             return Uni.createFrom().item(ResponseUtil.buildResponseHeaders(validationErrors));
         }
 
-        Product product = modelMapper.map(productRequestDTO, Product.class);
+        Product product = productMapper.toProduct(productRequestDTO);
 
         return productService.updateProduct(new ObjectId(id), product)
-                .map(product1 -> modelMapper.map(product1, ProductResponseDTO.class))
+                .map(product1 -> productMapper.toProductResponseDTO(product))
                 .onItem().transform(ResponseUtil::buildResponseObject)
                 .onFailure().recoverWithItem(ResponseUtil::handleError);
     }
@@ -98,27 +87,27 @@ public class ProductController {
     public Uni<Response> productsByInfluencerId(@PathParam("influencerId") String influencerId) {
         return productService.productsByInfluencerId(influencerId)
                 .onItem().transformToUni( products -> Uni.createFrom().item(products.stream().map(
-                        product -> modelMapper.map(product, ProductResponseDTO.class)).toList()))
+                        product -> productMapper.toProductResponseDTO(product)).toList()))
                 .onItem().transform(ResponseUtil::buildResponseList)
                 .onFailure().recoverWithItem(ResponseUtil::handleError);
     }
 
     @GET
-    @Path("/detail/{userId}/{slug}")
+    @Path("/detail/{influencerId}/{slug}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Uni<Response> getProductByUserAndSlug(@PathParam("userId") String userId, @PathParam("slug") String slug) {
-        return productService.getProductByUserAndSlug(userId, slug)
-                .map(product -> modelMapper.map(product, ProductResponseDTO.class))
+    public Uni<Response> getProductByUserAndSlug(@PathParam("influencerId") String influencerId, @PathParam("slug") String slug) {
+        return productService.getProductByInfluencerAndSlug(influencerId, slug)
+                .map(product -> productMapper.toProductResponseDTO(product))
                 .onItem().transform(ResponseUtil::buildResponseObject)
                 .onFailure().recoverWithItem(ResponseUtil::handleError);
     }
 
     @GET
-    @Path("/influencerId/{influencerId}/categoryName/{categoryName}")
+    @Path("/influencerId/{influencerId}/category/{categoryName}")
     public Uni<Response> getProductsInfluencerIdByCategoryName(@PathParam("influencerId") String influencerId, @PathParam("categoryName") String categoryName){
-        return productService.getProductsInfluencerIdByCategoryName(influencerId, categoryName)
+        return productService.getProductsByInfluencerAndCategoryName(influencerId, categoryName)
                 .onItem().transformToUni(products -> Uni.createFrom().item(products.stream()
-                        .map(product -> modelMapper.map(product, ProductResponseDTO.class)).toList()))
+                        .map(product -> productMapper.toProductResponseDTO(product)).toList()))
                 .onItem().transform(ResponseUtil::buildResponseList)
                 .onFailure().recoverWithItem(ResponseUtil::handleError);
     }

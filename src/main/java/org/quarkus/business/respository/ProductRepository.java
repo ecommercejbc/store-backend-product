@@ -10,7 +10,12 @@ import java.util.List;
 @Singleton
 public class ProductRepository implements ReactivePanacheMongoRepository<Product> {
 
-    public Uni<List<Product>> findProductsInfluencerIdByCategoryName(String influencerId, String categoryName){
-        return find("userId = ?1 and categoryName = ?2", influencerId, categoryName).list();
+    public Uni<List<Product>> findProductsByInfluencerAndCategoryName(String influencerId, String categoryName){
+        return find("influencerId = ?1 and categoryName = ?2", influencerId, categoryName).list();
+    }
+
+    public Uni<Product> findProductByInfluencerAndSlug(String influencerId, String slug){
+        return find("{ 'influencerId': { $regex: ?1 }, 'slug': { $regex: ?2, $options: 'i' } }",
+                "^" + influencerId + "$", "^" + slug + "$").firstResult();
     }
 }
